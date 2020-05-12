@@ -27,7 +27,7 @@ class Publications extends Component {
     }
   }
 
-  putUser = () => {
+  putUser = () => { 
     const {
       usuariosReducer,
       match: {params: { key }},
