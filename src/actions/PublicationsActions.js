@@ -2,7 +2,10 @@ import axios from "axios";
 import { BRING_ALL_FOR_USER, LOADING, ERROR } from "../types/publicationsTypes";
 import * as usuariosTypes from '../types/usuariosTypes'
 const { BRING_ALL } = usuariosTypes;
-
+/**
+ * 
+ * @param {*asdasdsd} key 
+ */
 export const bringForUser = (key) => async (dispatch, getState) => {
   const { usuarios } = getState().usuariosReducer;
   const { publications } = getState().publicationsReducer;
