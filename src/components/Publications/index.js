@@ -27,30 +27,62 @@ class Publications extends Component {
     }
   }
 
-  putUser = () => { 
+  putUser = () => {
     const {
       usuariosReducer,
-      match: {params: { key }},
+      match: {
+        params: { key },
+      },
     } = this.props;
 
-    if(usuariosReducer.error){
-      return <Fatal message="Algo salio mal "/>
+    if (usuariosReducer.error) {
+      return <Fatal message={usuariosReducer.error} />;
     }
-    if(!usuariosReducer.usuarios.length ||usuariosReducer.loading){
-      return <Spinner/>
+    if (!usuariosReducer.usuarios.length || usuariosReducer.loading) {
+      return <Spinner />;
     }
-    const nombre =  usuariosReducer.usuarios[key].name
-    return(
-      <h1> Publicaciones de nombre {nombre} </h1> 
-    )
+    const nombre = usuariosReducer.usuarios[key].name;
+    return <h1> Publicaciones de nombre {nombre} </h1>;
   };
 
+  putPublications = () => {
+    const {
+      usuariosReducer,
+      usuariosReducer: { usuarios },
+      publicationsReducer,
+      publicationsReducer: { publications },
+      match: {
+        params: { key },
+      },
+    } = this.props;
+
+    if (!usuarios.length || usuariosReducer.error) return;
+    if (publicationsReducer.loading) return <Spinner />;
+    if (publicationsReducer.error)
+      return <Fatal message={publicationsReducer.error} />;
+      if (publicationsReducer.loading) return <Spinner />;
+      if (!publications.length) return;
+      
+    if (!('publications_key' in usuarios[key])) return;
+    const {publications_key} =  usuarios[key]
+    return publications[publications_key].map((publicacion)=>(
+    <div key={publicacion.id}
+    onClick={()=>alert(publicacion.id)}>
+      <h2 className="pub_title">
+        {publicacion.title}
+      </h2>
+      <h3 >
+        {publicacion.body}
+      </h3>
+    </div>
+    ))
+  };
   render() {
     console.log(this.props);
     return (
       <div>
-        {this.props.match.params.key}
         {this.putUser()}
+        {this.putPublications()}
       </div>
     );
   }

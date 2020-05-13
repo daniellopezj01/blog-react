@@ -16,7 +16,7 @@ export const bringAll = () => async (dispatch) => {
     console.log("error", error.message);
     dispatch({
       type: ERROR,
-      payload: "Upsss ocurrio un error, intente mas tarde.",
+      payload: "information users not available.",
     });
   }
 };
