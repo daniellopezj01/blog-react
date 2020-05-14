@@ -1,5 +1,11 @@
 import axios from "axios";
-import { BRING_ALL_FOR_USER, LOADING, ERROR } from "../types/publicationsTypes";
+import {
+  UPDATE,
+  LOADING,
+  ERROR,
+  LOADING_COMMENTS,
+  ERROR_COMMENTS,
+} from "../types/publicationsTypes";
 import * as usuariosTypes from "../types/usuariosTypes";
 const { BRING_ALL } = usuariosTypes;
 /**
@@ -17,10 +23,17 @@ export const bringForUser = (key) => async (dispatch, getState) => {
     const res = await axios.get(
       `http://jsonplaceholder.typicode.com/posts?userId=${user_id}`
     );
-    const update_publications = [...publications, res.data];
+
+    const news = res.data.map((publication) => ({
+      ...publication,
+      comments: [],
+      open: false,
+    }));
+
+    const update_publications = [...publications, news];
 
     dispatch({
-      type: BRING_ALL_FOR_USER,
+      type: UPDATE,
       payload: update_publications,
     });
 
@@ -32,10 +45,61 @@ export const bringForUser = (key) => async (dispatch, getState) => {
       payload: update_users,
     });
   } catch (error) {
+    console.log(error.message);
+    dispatch({
+      type: ERROR,
+      payload: "publications not available ",
+    });
+  }
+};
+
+export const openClose = (pub_key, com_key) => (dispatch, getState) => {
+  const { publications } = getState().publicationsReducer;
+  const selected = publications[pub_key][com_key];
+  const updated = {
+    ...selected,
+    isOpen: !selected.isOpen,
+  };
+  const updatedPublications = [...publications];
+  updatedPublications[pub_key] = [...publications[pub_key]];
+  console.log(pub_key, com_key);
+  updatedPublications[pub_key][com_key] = updated;
+  dispatch({
+    type: UPDATE,
+    payload: updatedPublications,
+  });
+};
+
+export const bringComments = (pub_key, com_key) => async (
+  dispatch,
+  getState
+) => {
+ dispatch({
+   type:LOADING_COMMENTS
+ })
+  const { publications } = getState().publicationsReducer;
+  const selected = publications[pub_key][com_key];
+  try {
+    const res = await axios.get(
+      `http://jsonplaceholder.typicode.com/comments?postId=${selected.id}`
+    );
+    const updated = {
+      ...selected,
+      comments: res.data,
+    };
+    const updatedPublications = [...publications];
+    updatedPublications[pub_key] = [...publications[pub_key]];
+    console.log(pub_key, com_key);
+    updatedPublications[pub_key][com_key] = updated;
+    dispatch({
+      type: UPDATE,
+      payload: updatedPublications,
+    });
+  } catch (error) {
     console.log(error.message)
     dispatch({
-      type:ERROR,
-      payload:"publications not available "
+      type:ERROR_COMMENTS,
+      payload:"Comentarios no disponibles."
     })
   }
 };

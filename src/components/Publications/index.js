@@ -4,8 +4,13 @@ import * as usuariosActions from "../../actions/UserActions";
 import * as publicationsActions from "../../actions/PublicationsActions";
 import Spinner from "../generals/Spinner";
 import Fatal from "../generals/Fatal";
+import Comments from "./Comments";
 const { bringAll: bringAllUsers } = usuariosActions;
-const { bringForUser: bringPublicationsForUser } = publicationsActions;
+const {
+  bringForUser: bringPublicationsForUser,
+  openClose,
+  bringComments
+} = publicationsActions;
 
 class Publications extends Component {
   async componentDidMount() {
@@ -60,22 +65,34 @@ class Publications extends Component {
     if (publicationsReducer.loading) return <Spinner />;
     if (publicationsReducer.error)
       return <Fatal message={publicationsReducer.error} />;
-      if (publicationsReducer.loading) return <Spinner />;
-      if (!publications.length) return;
-      
-    if (!('publications_key' in usuarios[key])) return;
-    const {publications_key} =  usuarios[key]
-    return publications[publications_key].map((publicacion)=>(
-    <div key={publicacion.id}
-    onClick={()=>alert(publicacion.id)}>
-      <h2 className="pub_title">
-        {publicacion.title}
-      </h2>
-      <h3 >
-        {publicacion.body}
-      </h3>
-    </div>
-    ))
+    if (publicationsReducer.loading) return <Spinner />;
+    if (!publications.length) return;
+
+    if (!("publications_key" in usuarios[key])) return;
+    const { publications_key } = usuarios[key];
+    return this.showInfo(publications[publications_key], publications_key);
+  };
+
+  showInfo = (publications, pub_key) =>
+    publications.map((publicacion, com_key) => (
+      <div
+        key={publicacion.id}
+        onClick={() =>
+          this.showComments(pub_key, com_key, publicacion.comments)
+        }
+      >
+        <h2 className="pub_title">{publicacion.title}</h2>
+        <h3>{publicacion.body}</h3>
+        {publicacion.isOpen ? <Comments  coments={publicacion.comments}/> : ""}
+      </div>
+    ));
+
+  showComments = (pub_key, com_key, commentsPub) => {
+    console.log(commentsPub);
+    this.props.openClose(pub_key, com_key)
+    if(!commentsPub?.length){
+      this.props.bringComments(pub_key, com_key)
+    }
   };
   render() {
     console.log(this.props);
@@ -95,6 +112,8 @@ const mapStateToProps = ({ usuariosReducer, publicationsReducer }) => {
 const dispatchToProps = {
   bringAllUsers,
   bringPublicationsForUser,
+  openClose,
+  bringComments
 };
 
 export default connect(mapStateToProps, dispatchToProps)(Publications);
