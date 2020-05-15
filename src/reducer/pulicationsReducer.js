@@ -1,5 +1,6 @@
 // import {BRING_ALL,LOADING,ERROR} from '../types/usuariosTypes'
 import {
+  UPDATE_COMMENTS,
   UPDATE,
   LOADING,
   ERROR,
@@ -28,6 +29,13 @@ export default (state = INITIAL_STATE, action) => {
       return { ...state, loading: true };
     case ERROR:
       return { ...state, error: action.payload, loading: false };
+    case UPDATE_COMMENTS:
+      return {
+        ...state,
+        publications: action.payload,
+        commentsLoading: false,
+        commentsError: "",
+      };
     case LOADING_COMMENTS:
       return { ...state, commentsLoading: true };
     case ERROR_COMMENTS:

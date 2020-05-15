@@ -82,7 +82,7 @@ class Publications extends Component {
         }
       >
         <h2 className="pub_title">{publicacion.title}</h2>
-        <h3>{publicacion.body}</h3>
+        <p className="pub-description">{publicacion.body}</p>
         {publicacion.isOpen ? <Comments  coments={publicacion.comments}/> : ""}
       </div>
     ));

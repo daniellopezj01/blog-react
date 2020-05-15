@@ -4,13 +4,13 @@ import Spinner from "../generals/Spinner";
 import Fatal from "../generals/Fatal";
 
 const comments = (props) => {
-    console.log("entre a comments",props)
-    if(props.loading){
-        return <Spinner/>
-    }
-    if(props.error){
-        return <Fatal message={props.error.message}/>
-    }
+  if (props.commentsError) {
+    return <Fatal message={props.commentsError} />;
+  }
+  if (props.commentsLoading && !props.comments?.length) {
+    return <Spinner />;
+  }
+
   const putComments = () =>
     props.coments.map((comment) => (
       <li key={comment.id}>
@@ -18,7 +18,7 @@ const comments = (props) => {
           <u>{comment.email}</u>
         </b>
         <br />
-        {comment.body}
+        <p className="pub-description"> {comment.body}</p>
       </li>
     ));
 

@@ -38,5 +38,15 @@ body {
 }
 
 .pub_title {
+    cursor: pointer;
     border-top: 1px solid black;
+}
+
+.pub-description {
+    cursor: pointer;
+    color: gray;
+}
+
+li {
+    margin: 15px 0 15px 0;
 }
