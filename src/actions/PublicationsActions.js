@@ -1,5 +1,6 @@
 import axios from "axios";
 import {
+  UPDATE_COMMENTS,
   UPDATE,
   LOADING,
   ERROR,
@@ -89,10 +90,9 @@ export const bringComments = (pub_key, com_key) => async (
     };
     const updatedPublications = [...publications];
     updatedPublications[pub_key] = [...publications[pub_key]];
-    console.log(pub_key, com_key);
     updatedPublications[pub_key][com_key] = updated;
     dispatch({
-      type: UPDATE,
+      type: UPDATE_COMMENTS,
       payload: updatedPublications,
     });
   } catch (error) {
