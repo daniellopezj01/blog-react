@@ -3,8 +3,24 @@ import { connect } from "react-redux";
 import * as taskActions from "../../actions/TaskActions";
 import Spinner from "../generals/Spinner";
 import Fatal from "../generals/Fatal";
-import {Redirect}  from 'react-router-dom';
+import { Redirect } from "react-router-dom";
 export class Save extends Component {
+  componentDidMount() {
+    console.log(this.props);
+    const {
+      match: {
+        params: { usId, taskId },
+      },
+      tasks,
+      changeTitle,
+      changeUserId,
+    } = this.props;
+    if (usId && taskId) {
+      const task = tasks[usId][taskId];
+      changeUserId(task.userId);
+      changeTitle(task.title);
+    }
+  }
   changeUserId = (event) => {
     this.props.changeUserId(event.target.value);
   };
@@ -13,9 +29,24 @@ export class Save extends Component {
   };
 
   save = () => {
-    const { user_id, title, add } = this.props;
+    const {
+      user_id,
+      title,
+      add,
+      match: {
+        params: { usId, taskId },
+      },
+      tasks,
+      updateTask,
+    } = this.props;
     const newTask = { userId: user_id, title, completed: false };
-    add(newTask);
+    if (usId && taskId) {
+      const task = tasks[usId][taskId];
+      const uploadTask = { ...newTask, completed: task.completed, id: task.id };
+      updateTask(uploadTask);
+    } else {
+      add(newTask);
+    }
   };
 
   disabledButton = () => {
@@ -30,20 +61,18 @@ export class Save extends Component {
   };
 
   showAction = () => {
-    const {error, loading} = this.props
-    if(loading){
-    return  <Spinner/>
+    const { error, loading } = this.props;
+    if (loading) {
+      return <Spinner />;
     }
-    if(error){
-      return  <Fatal message={error}/>
+    if (error) {
+      return <Fatal message={error} />;
     }
   };
   render() {
     return (
       <div>
-        {
-          (this.props.become)?<Redirect to='/tareas'/>:''
-        }
+        {this.props.become ? <Redirect to="/tareas" /> : ""}
         <h1>Guardar Tarea</h1>
         Usuario Id:
         <input
